@@ -1,0 +1,12 @@
+This project is created in order to publish events. 
+Every event will have it's own task list which will help people manage their time and do not waste it on figuring out 
+what should be done next. 
+Here i have 4 models.
+  User model one-to-one with companies. That means only one user can own a conpany at a time.
+  User can have multiple events.
+  
+  Event can have multiple tasks and only one author.
+  
+  Task can have only one event.
+  
+  Company can have multiple events and only one author.
