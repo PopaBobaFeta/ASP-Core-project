@@ -20,9 +20,38 @@ namespace Events.Controllers
         }
 
         // GET: Events
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+        string sortOrder,
+        string currentFilter,
+        string searchString,
+        int? pageNumber)
         {
-            return View(await _context.events.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+            ViewData["CurrentFilter"] = searchString;
+
+
+            var events = from e in _context.events
+                           select e;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                events = events.Where(s => s.EventName.Contains(searchString)
+                                       || s.EventDescription.Contains(searchString)
+                                       || s.EventType.Contains(searchString));
+            }
+
+
+            //return View(await _context.events.ToListAsync());
+            int pageSize = 3;
+            return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Events/Details/5
