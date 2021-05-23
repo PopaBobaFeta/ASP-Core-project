@@ -20,10 +20,44 @@ namespace Events.Controllers
         }
 
         // GET: Companies
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+        string sortOrder,
+        string currentFilter,
+        string searchString,
+        int? pageNumber)
         {
-            var eventDbContext = _context.companies.Include(c => c.User);
-            return View(await eventDbContext.ToListAsync());
+            ViewData["CurrentSort"] = sortOrder;
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var companies = from c in _context.companies select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                companies = companies.Where(s => s.Name.Contains(searchString)
+                                       || s.Description.Contains(searchString));
+            }
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    companies = companies.OrderByDescending(c => c.Description).Include(c => c.User);
+                        break;
+            }
+           // var eventDbContext = _context.companies.Include(c => c.User);
+            //return View(await companies.AsNoTracking().ToListAsync());
+            int pageSize = 3;
+            return View(await PaginatedList<Company>.CreateAsync(companies.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Companies/Details/5
@@ -48,7 +82,7 @@ namespace Events.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.users, "UserId", "UserId");
+            ViewData["UserId"] = new SelectList(_context.users, "UserId", "Name");
             return View();
         }
 

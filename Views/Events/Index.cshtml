@@ -1,53 +1,135 @@
-﻿@model IEnumerable<Events.Models.Event>
+﻿@model PaginatedList<Events.Models.Event>
 
-@{
-    ViewData["Title"] = "Index";
-}
+@{ ViewData["Title"] = "Index"; }
 
 <h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.EventName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EventType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EventDescription)
-            </td>
-            <td>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+<div class="card-deck">
+        @foreach (var item in Model)
+        {
+<div class="card myCard">
+    <div class="myCardHeader">
+        @Html.DisplayFor(modelItem => item.EventName)
+    </div>
+        
+    <div class="myCardDate">
+        @Html.DisplayFor(modelItem => item.ReleaseDate)
+    </div>
+
+    <div class="typeRow">
+        <div class="typeBlock">
+            <div class="typeName">
                 @Html.DisplayFor(modelItem => item.EventType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.EventId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.EventId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.EventId">Delete</a>
-            </td>
-        </tr>
+            </div>
+        </div>
+    </div>
+
+    <div class="myCardDescription">
+        @Html.DisplayFor(modelItem => item.EventDescription)
+    </div>
+        
+    
+    <div class="controlRow">
+        <a class="btn-info p-1" asp-route-id="@item.EventId">Details</a> |
+        <a class="btn-success p-1" asp-route-id="@item.EventId">Edit</a> |
+        <a class="btn-danger p-1" asp-action="Delete" asp-route-id="@item.EventId">Delete</a>
+    </div>
+    
+        
+    
+        
+        
+        
+</div>
+        }
+</div>
+
+<style>
+    .myCard {
+        background-color: ghostwhite !important;
+        width: 80%;
+        height: 230px;
+        display:flex;
+        flex-direction:column;
+    }
+    .myCardHeader{
+        display:flex;
+        flex-direction: row;
+        height:40px;
+        font-size:25px;
+        font-weight: 700;
+        width: 100%;
+        padding-left: 15px;
+    }
+    .myCardDate{
+        padding-left: 15px;
+        height:20px;
+        width: 100%;
+        font-size: 15px;
+        color: dimgrey;
+    }
+
+    .typeRow{
+        display: flex;
+        flex-direction: row;
+        height:auto;
+        width:auto;
+        padding:15px;
+    }
+    .typeBlock {
+        padding: 5px;
+        width: auto;
+        height: 40px;
+        background-color: Highlight;
+    }
+    .typeName{
+        color:white;
+        font-size: 18px;
+    }
+
+    .myCardDescription {
+        height:80px;
+        width:90%;
+        padding:15px;
+        text-overflow: initial;
+    }
+
+    .controlRow{
+        height: 60px;
+        width:90%;
+        padding-left: 15px;
+    }
+</style>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
-    </tbody>
-</table>
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

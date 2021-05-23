@@ -2,7 +2,31 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="myContainer">
+    <div class="bannerHeader">
+        Welcome To
+    </div>
+    <div class="bannerHeader">
+        Task Manager
+    </div>
 </div>
+
+<style>
+.myContainer { height: 85vh; 
+               width: 100%; 
+               background-image: url("https://i.pinimg.com/originals/5a/c1/29/5ac1296b709f4427d4c7785a322d78a2.png");
+               display:flex;
+               flex-direction: column;
+               justify-content:center;
+               align-items: center;
+}
+
+.bannerHeader{
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    color: white;
+    font-size: 75px;
+    font-weight: 500;
+}
+</style>
